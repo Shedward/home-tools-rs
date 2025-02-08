@@ -1,0 +1,6 @@
+[
+  {
+    "label": "Cargo Run",
+    "command": "cargo run"
+  }
+]
