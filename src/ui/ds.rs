@@ -8,6 +8,7 @@ pub enum Mode {
     Dark,
 }
 
+#[derive(Clone, Copy)]
 pub struct Colors {
     pub heading: Color32,
     pub primary: Color32,
@@ -58,7 +59,7 @@ impl Colors {
 
 pub enum Strokes {}
 
-pub struct Space(i8);
+pub struct Space(pub i8);
 
 impl Space {
     pub const ZERO: Space = Space(0);
@@ -94,7 +95,7 @@ pub struct SpaceSize {
 
 impl SpaceSize {
     const CONTROL_MIN: SpaceSize = SpaceSize {
-        width: Space::MIN,
+        width: Space(4),
         height: Space(4),
     };
 
@@ -189,6 +190,7 @@ impl Shadows {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct Theme {
     pub mode: Mode,
     pub colors: Colors,
@@ -235,8 +237,8 @@ impl Theme {
             slider_rail_height: SpaceSize::CONTROL.height.into(),
             combo_width: SpaceSize::CONTROL_WIDE.width.into(),
             text_edit_width: SpaceSize::CONTROL_COLUMN.width.into(),
-            icon_width: SpaceSize::CONTROL_MIN.width.into(),
-            icon_width_inner: 0.0,
+            icon_width: Space(2).into(),
+            icon_width_inner: Space::MIN.into(),
             icon_spacing: Space::MIN.into(),
             default_area_size: SpaceSize::CONTROL_COLUMN.into(),
             tooltip_width: SpaceSize::CONTROL_WIDE.width.into(),
