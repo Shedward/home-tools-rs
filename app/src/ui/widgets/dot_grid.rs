@@ -1,8 +1,6 @@
-use std::ops::Sub;
-
 use egui::*;
 
-use super::ds::Space;
+use crate::ui::ds::space::Space;
 
 pub struct Cell {
     pub fill: Color32,
@@ -45,8 +43,12 @@ where
     fn ui(self, ui: &mut Ui) -> Response {
         let (rect, response) = ui.allocate_exact_size(self.size(), Sense::hover());
 
-        ui.painter()
-            .rect_stroke(rect, 0.0, ui.style().interact(&response).bg_stroke);
+        ui.painter().rect_stroke(
+            rect,
+            0.0,
+            ui.style().interact(&response).bg_stroke,
+            StrokeKind::Inside,
+        );
 
         for x in 0..self.cols {
             for y in 0..self.rows {
