@@ -4,6 +4,10 @@ use egui::Ui;
 pub struct OnlineCountersTool;
 
 impl Tool for OnlineCountersTool {
+    fn id(&self) -> &'static str {
+        "online_counters"
+    }
+
     fn title(&self) -> String {
         "Online".to_owned()
     }

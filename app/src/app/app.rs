@@ -3,6 +3,7 @@ use egui::Widget;
 use super::services::{Services, SharedServices};
 use crate::tools;
 use crate::tools::tool::Tool;
+use crate::ui::ds::fonts::Fonts;
 use crate::ui::ds::space::Space;
 use crate::ui::widgets;
 use std::rc::Rc;
@@ -22,8 +23,11 @@ impl Default for App {
             open_tool: None,
         };
 
+        app.add_tool(tools::HomeTool {});
         app.add_tool(tools::OnlineCountersTool {});
         app.add_tool(tools::AboutTool {});
+
+        app.open_tool = app.tools.first().cloned();
 
         app
     }
@@ -36,9 +40,12 @@ impl eframe::App for App {
             .exact_width(Space(16).value())
             .show(ctx, |ui| {
                 for tool in &self.tools {
-                    if widgets::tool_button::ToolButton::new(&tool)
-                        .ui(ui)
-                        .clicked()
+                    if widgets::tool_button::ToolButton::new(
+                        &tool,
+                        Some(tool.id()) == self.open_tool.as_ref().map(|t| t.id()),
+                    )
+                    .ui(ui)
+                    .clicked()
                     {
                         self.open_tool = Some(tool.clone());
                     };
@@ -59,15 +66,7 @@ impl App {
         cc.egui_ctx.set_theme(egui::Theme::Dark);
         cc.egui_ctx.set_style(app.theme().style());
 
-        let mut fonts = egui::FontDefinitions::default();
-        fonts.font_data.insert(
-            "phosphor".into(),
-            egui_phosphor::Variant::Regular.font_data().into(),
-        );
-
-        if let Some(font_keys) = fonts.families.get_mut(&egui::FontFamily::Monospace) {
-            font_keys.push("phosphor".into());
-        }
+        cc.egui_ctx.set_fonts(Fonts::font_definitions());
 
         app
     }

@@ -2,8 +2,8 @@ use super::colors::*;
 use super::shadows::*;
 use super::space::*;
 use super::strokes::*;
+use crate::ui::ds;
 use egui::{style::*, *};
-use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Mode {
@@ -34,18 +34,6 @@ impl Theme {
 
     pub fn style(&self) -> egui::Style {
         use egui::TextStyle::*;
-
-        let text_styles: BTreeMap<_, _> = [
-            (Heading, FontId::new(18.0, FontFamily::Monospace)),
-            (Body, FontId::new(12.0, FontFamily::Monospace)),
-            (
-                TextStyle::Monospace,
-                FontId::new(12.0, FontFamily::Monospace),
-            ),
-            (Button, FontId::new(12.0, FontFamily::Monospace)),
-            (Small, FontId::new(10.0, FontFamily::Monospace)),
-        ]
-        .into();
 
         let spacing = Spacing {
             item_spacing: Space::MIN.into(),
@@ -149,7 +137,7 @@ impl Theme {
             override_text_valign: Option::None,
             override_font_id: Option::None,
 
-            text_styles,
+            text_styles: ds::TextStyle::text_styles(),
             drag_value_text_style: Body,
             spacing,
             visuals,

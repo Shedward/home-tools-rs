@@ -1,6 +1,7 @@
 use egui::{Context, Ui};
 
 pub trait Tool {
+    fn id(&self) -> &'static str;
     fn title(&self) -> String;
     fn icon(&self) -> String;
     fn ui(&self, ui: &mut Ui);

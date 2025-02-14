@@ -3,21 +3,23 @@ use egui::*;
 pub struct Space(pub i8);
 
 impl Space {
+    pub const HALF_STEP: i8 = 2;
+    pub const STEP: i8 = 4;
     pub const ZERO: Space = Space(0);
     pub const MIN: Space = Space(1);
     pub const MAX: Space = Space(5);
     pub const COLUMN: Space = Space(36);
 
     pub fn value(&self) -> f32 {
-        4.0 * self.0 as f32
+        Space::STEP as f32 * self.0 as f32
     }
 
     pub fn value_i8(&self) -> i8 {
-        self.0 * 4
+        self.0 * Space::STEP
     }
 
     pub fn value_u8(&self) -> u8 {
-        self.0 as u8 * 4
+        self.0 as u8 * Space::STEP as u8
     }
 
     pub fn add(&self, step: i8) -> Self {
