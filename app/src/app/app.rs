@@ -6,13 +6,14 @@ use crate::tools::tool::Tool;
 use crate::ui::ds::fonts::Fonts;
 use crate::ui::ds::space::Space;
 use crate::ui::widgets;
+use std::cell::RefCell;
 use std::rc::Rc;
 
 pub struct App {
     pub services: SharedServices,
-    pub tools: Vec<Rc<dyn crate::tools::tool::Tool>>,
+    pub tools: Vec<Rc<RefCell<dyn Tool>>>,
 
-    pub open_tool: Option<Rc<dyn crate::tools::tool::Tool>>,
+    pub open_tool: Option<Rc<RefCell<dyn Tool>>>,
 }
 
 impl Default for App {
@@ -41,9 +42,9 @@ impl eframe::App for App {
             .frame(egui::Frame::side_top_panel(&ctx.style()).inner_margin(Space(2)))
             .exact_width(Space(16).value())
             .show(ctx, |ui| {
-                let selected_tool_id = self.open_tool.as_ref().map(|t| t.id());
+                let selected_tool_id = self.open_tool.as_ref().map(|t| t.borrow().id());
                 for tool in &self.tools {
-                    if widgets::ToolButton::new(tool, Some(tool.id()) == selected_tool_id)
+                    if widgets::ToolButton::new(tool, Some(tool.borrow().id()) == selected_tool_id)
                         .ui(ui)
                         .clicked()
                     {
@@ -52,7 +53,8 @@ impl eframe::App for App {
                 }
             });
         egui::CentralPanel::default().show(ctx, |ui| {
-            if let Some(tool) = &self.open_tool.as_mut() {
+            if let Some(tool_cell) = &self.open_tool.as_mut() {
+                let mut tool = tool_cell.borrow_mut();
                 ui.heading(format!("Home - {}", tool.title()));
                 ui.add_space(Space(2).into());
                 tool.ui(ui);
@@ -78,6 +80,6 @@ impl App {
     }
 
     pub fn add_tool<T: Tool + 'static>(&mut self, tool: T) {
-        self.tools.push(Rc::new(tool));
+        self.tools.push(Rc::new(RefCell::new(tool)));
     }
 }

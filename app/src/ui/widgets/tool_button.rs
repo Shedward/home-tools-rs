@@ -1,5 +1,6 @@
 use crate::ui::ds;
 use egui::*;
+use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::ui::ds::geometry::{ContainsEdges, Insetable, Movable};
@@ -54,10 +55,10 @@ impl Widget for ToolButton {
 }
 
 impl ToolButton {
-    pub fn new(tool: &Rc<dyn Tool>, is_selected: bool) -> Self {
+    pub fn new(tool: &Rc<RefCell<dyn Tool>>, is_selected: bool) -> Self {
         Self {
-            label: tool.title(),
-            icon: tool.icon(),
+            label: tool.borrow().title(),
+            icon: tool.borrow().icon(),
             is_selected,
         }
     }
