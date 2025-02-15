@@ -24,11 +24,9 @@ impl Default for App {
             open_tool: None,
         };
 
-        app.add_tool(tools::HomeTool {});
-        app.add_tool(tools::OnlineCountersTool {
-            shared_services: app.services.clone(),
-        });
-        app.add_tool(tools::AboutTool {});
+        app.add_tool(tools::HomeTool::new());
+        app.add_tool(tools::OnlineCountersTool::new(app.services.clone()));
+        app.add_tool(tools::AboutTool::new());
 
         app.open_tool = app.tools.first().cloned();
 

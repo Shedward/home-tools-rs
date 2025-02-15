@@ -2,6 +2,12 @@ use crate::tools::tool::Tool;
 
 pub struct HomeTool;
 
+impl HomeTool {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
 impl Tool for HomeTool {
     fn id(&self) -> &'static str {
         "home"

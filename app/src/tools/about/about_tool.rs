@@ -2,6 +2,12 @@ use crate::tools::tool::Tool;
 
 pub struct AboutTool;
 
+impl AboutTool {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
 impl Tool for AboutTool {
     fn id(&self) -> &'static str {
         "about"
