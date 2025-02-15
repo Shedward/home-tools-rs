@@ -24,7 +24,9 @@ impl Default for App {
         };
 
         app.add_tool(tools::HomeTool {});
-        app.add_tool(tools::OnlineCountersTool {});
+        app.add_tool(tools::OnlineCountersTool {
+            shared_services: app.services.clone(),
+        });
         app.add_tool(tools::AboutTool {});
 
         app.open_tool = app.tools.first().cloned();
@@ -39,20 +41,20 @@ impl eframe::App for App {
             .frame(egui::Frame::side_top_panel(&ctx.style()).inner_margin(Space(2)))
             .exact_width(Space(16).value())
             .show(ctx, |ui| {
+                let selected_tool_id = self.open_tool.as_ref().map(|t| t.id());
                 for tool in &self.tools {
-                    if widgets::tool_button::ToolButton::new(
-                        &tool,
-                        Some(tool.id()) == self.open_tool.as_ref().map(|t| t.id()),
-                    )
-                    .ui(ui)
-                    .clicked()
+                    if widgets::ToolButton::new(tool, Some(tool.id()) == selected_tool_id)
+                        .ui(ui)
+                        .clicked()
                     {
                         self.open_tool = Some(tool.clone());
                     };
                 }
             });
         egui::CentralPanel::default().show(ctx, |ui| {
-            if let Some(tool) = &self.open_tool {
+            if let Some(tool) = &self.open_tool.as_mut() {
+                ui.heading(format!("Home - {}", tool.title()));
+                ui.add_space(Space(2).into());
                 tool.ui(ui);
             }
         });

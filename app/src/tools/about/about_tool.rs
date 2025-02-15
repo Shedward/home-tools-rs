@@ -15,7 +15,7 @@ impl Tool for AboutTool {
         egui_phosphor::regular::INFO.to_owned()
     }
 
-    fn ui(&self, ui: &mut egui::Ui) {
+    fn ui(&mut self, ui: &mut egui::Ui) {
         ui.heading("About");
         ui.label("v0.0.0");
         ui.button("Send money").clicked();

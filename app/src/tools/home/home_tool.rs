@@ -15,5 +15,5 @@ impl Tool for HomeTool {
         egui_phosphor::regular::HOUSE.to_owned()
     }
 
-    fn ui(&self, _: &mut egui::Ui) {}
+    fn ui(&mut self, _: &mut egui::Ui) {}
 }

@@ -48,3 +48,13 @@ impl Colors {
         self.tertiary
     }
 }
+
+pub trait Color32Ext {
+    fn with_alpha(self, alpha: u8) -> Color32;
+}
+
+impl Color32Ext for Color32 {
+    fn with_alpha(self, alpha: u8) -> Color32 {
+        Color32::from_rgba_premultiplied(self.r(), self.g(), self.b(), alpha)
+    }
+}
