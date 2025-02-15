@@ -32,7 +32,7 @@ impl Widget for ToolButton {
         );
 
         ui.painter().text(
-            text_rect.center_top(),
+            text_rect.center_top().moved_down(Space::HALF_STEP),
             Align2::CENTER_BOTTOM,
             &self.icon,
             ds::TextStyle::BigIcon.into(),
