@@ -38,9 +38,9 @@ where
     }
 
     #[inline]
-    pub fn with_size(mut self, cols: u32, rows: u32) -> Self {
-        self.cols = cols;
-        self.rows = rows;
+    pub fn with_size(mut self, cols: usize, rows: usize) -> Self {
+        self.cols = cols as u32;
+        self.rows = rows as u32;
         self
     }
 

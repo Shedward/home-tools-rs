@@ -1,3 +1,6 @@
+use std::ops::Deref;
+
+use super::online_grid::{self, *};
 use crate::app::services::*;
 use crate::tools::tool::Tool;
 use crate::ui::widgets::dot_grid;
@@ -10,7 +13,7 @@ use shared::tools::Loading;
 pub struct OnlineCountersTool {
     pub shared_services: SharedServices,
     pub rows: u32,
-    pub counters_response: rest_client::LoadingValue<Vec<online::OnlineCounter>>,
+    pub grid: rest_client::LoadingValue<OnlineGrid>,
 }
 
 impl OnlineCountersTool {
@@ -18,15 +21,16 @@ impl OnlineCountersTool {
         Self {
             shared_services,
             rows: 10,
-            counters_response: Default::default(),
+            grid: Default::default(),
         }
     }
 
     fn fetch_online_data(&mut self) {
-        let request = online::OnlineCountersRequest::new();
+        let two_weeks_from_now = chrono::Utc::now() - chrono::Duration::weeks(2);
+        let request = online::OnlineCountersRequest::new().from(two_weeks_from_now.naive_local());
         self.shared_services.rest_client().request(
             request.request(),
-            rest_client::ResponseHandler::loading(self.counters_response.clone()),
+            rest_client::ResponseHandler::loading_map(self.grid.clone(), OnlineGrid::new),
         );
     }
 }
@@ -46,19 +50,21 @@ impl Tool for OnlineCountersTool {
 
     fn ui(&mut self, ui: &mut Ui) {
         let theme = self.shared_services.theme();
-        dot_grid::DotGrid::new(|pos| dot_grid::Cell {
-            fill: theme.colors.plot((pos.x + pos.y % self.rows) as f32 / 20.0),
-        })
-        .with_size(16, 24)
-        .ui(ui);
 
-        let response = self.counters_response.lock().unwrap();
-        let status_description = match *response {
-            Loading::None => "No data",
-            Loading::Loading => "Loading",
-            Loading::Loaded(_) => "Loaded",
-            Loading::Failed(_) => "Error",
-        };
-        ui.label(status_description);
+        let grid = self.grid.lock().unwrap();
+        dot_grid::DotGrid::new(|pos| dot_grid::Cell {
+            fill: match grid.deref() {
+                Loading::Loaded(grid) => theme
+                    .colors
+                    .plot(grid.rel_at(pos.x as usize, pos.y as usize)),
+                _ => theme.colors.accessory(),
+            },
+        })
+        .with_size(online_grid::DAYS_COUNT, online_grid::HOURS_COUNT)
+        .ui(ui);
+    }
+
+    fn on_appear(&mut self) {
+        self.fetch_online_data();
     }
 }

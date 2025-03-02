@@ -16,3 +16,4 @@ eframe = { version = "0.31", default-features = false, features = [
 log = "0.4"
 
 egui-phosphor = { version = "0.9", features = ["thin", "bold"] }
+chrono = { version = "0.4", features = ["serde"] }

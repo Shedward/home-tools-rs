@@ -49,7 +49,7 @@ impl Colors {
     }
 
     pub fn plot(self, value: f32) -> Color32 {
-        self.positive.lerp_to_gamma(self.accessory(), value)
+        self.positive.lerp_to_gamma(self.accessory(), 1.0 - value)
     }
 }
 

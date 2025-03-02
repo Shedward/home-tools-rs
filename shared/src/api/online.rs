@@ -37,7 +37,7 @@ impl OnlineCountersRequest {
 
 #[derive(Deserialize, Debug)]
 pub struct OnlineCounter {
-    #[serde(with = "chrono::serde::ts_milliseconds")]
+    #[serde(with = "chrono::serde::ts_seconds")]
     pub start: DateTime<Utc>,
     pub count: u32,
 }

@@ -46,7 +46,9 @@ impl eframe::App for App {
                         .ui(ui)
                         .clicked()
                     {
-                        self.open_tool = Some(tool.clone());
+                        let open_tool = tool.clone();
+                        open_tool.borrow_mut().on_appear();
+                        self.open_tool = Some(open_tool);
                     };
                 }
             });
