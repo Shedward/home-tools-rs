@@ -1,5 +1,6 @@
 #[derive(Debug, PartialEq)]
 pub enum Loading<T, E> {
+    None,
     Loading,
     Loaded(T),
     Failed(E),
@@ -9,12 +10,26 @@ impl<T, E> Loading<T, E>
 where
     E: Clone,
 {
-    pub fn map<U, F: Fn(&T) -> U>(&self, f: F) -> Loading<U, E> {
+    pub fn from_result(result: Result<T, E>) -> Self {
+        match result {
+            Ok(val) => Loading::Loaded(val),
+            Err(err) => Loading::Failed(err),
+        }
+    }
+
+    pub fn map<U, F: FnOnce(&T) -> U>(&self, f: F) -> Loading<U, E> {
         match self {
+            Self::None => Loading::None,
             Self::Loading => Loading::Loading,
             Self::Loaded(val) => Loading::Loaded(f(val)),
             Self::Failed(err) => Loading::Failed(err.clone()),
         }
+    }
+}
+
+impl<T, E> Default for Loading<T, E> {
+    fn default() -> Self {
+        Loading::None
     }
 }
 

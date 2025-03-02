@@ -47,6 +47,10 @@ impl Colors {
     pub fn accessory(&self) -> Color32 {
         self.tertiary
     }
+
+    pub fn plot(self, value: f32) -> Color32 {
+        self.positive.lerp_to_gamma(self.accessory(), value)
+    }
 }
 
 pub trait Color32Ext {

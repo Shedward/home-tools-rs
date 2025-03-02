@@ -1,11 +1,16 @@
-use crate::app::services::SharedServices;
+use crate::app::services::*;
 use crate::tools::tool::Tool;
 use crate::ui::widgets::dot_grid;
 use egui::{Ui, Widget};
+use shared::api::online;
+use shared::rest_client::DefaultResponseHandlers;
+use shared::rest_client::*;
+use shared::tools::Loading;
 
 pub struct OnlineCountersTool {
     pub shared_services: SharedServices,
     pub rows: u32,
+    pub counters_response: rest_client::LoadingValue<Vec<online::OnlineCounter>>,
 }
 
 impl OnlineCountersTool {
@@ -13,7 +18,16 @@ impl OnlineCountersTool {
         Self {
             shared_services,
             rows: 10,
+            counters_response: Default::default(),
         }
+    }
+
+    fn fetch_online_data(&mut self) {
+        let request = online::OnlineCountersRequest::new();
+        self.shared_services.rest_client().request(
+            request.request(),
+            rest_client::ResponseHandler::loading(self.counters_response.clone()),
+        );
     }
 }
 
@@ -31,15 +45,20 @@ impl Tool for OnlineCountersTool {
     }
 
     fn ui(&mut self, ui: &mut Ui) {
-        let theme = self.shared_services.lock().unwrap().theme;
-        egui::Slider::new(&mut self.rows, 1..=20).ui(ui);
+        let theme = self.shared_services.theme();
         dot_grid::DotGrid::new(|pos| dot_grid::Cell {
-            fill: theme.colors.positive.lerp_to_gamma(
-                theme.colors.negative,
-                (pos.x + pos.y % self.rows) as f32 / 20.0,
-            ),
+            fill: theme.colors.plot((pos.x + pos.y % self.rows) as f32 / 20.0),
         })
-        .with_size(14, 24)
+        .with_size(16, 24)
         .ui(ui);
+
+        let response = self.counters_response.lock().unwrap();
+        let status_description = match *response {
+            Loading::None => "No data",
+            Loading::Loading => "Loading",
+            Loading::Loaded(_) => "Loaded",
+            Loading::Failed(_) => "Error",
+        };
+        ui.label(status_description);
     }
 }
