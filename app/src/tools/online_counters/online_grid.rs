@@ -44,8 +44,6 @@ impl OnlineGrid {
             grid.values[day_index][hour_index] = new_value;
         }
 
-        dbg!(&grid);
-
         grid
     }
 

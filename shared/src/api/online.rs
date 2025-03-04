@@ -2,14 +2,14 @@ use crate::rest_client::*;
 use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::Deserialize;
 
-pub struct OnlineCountersRequest {
+pub struct GetOnlineCounters {
     pub from: Option<NaiveDateTime>,
     pub mac: Option<String>,
 }
 
-impl OnlineCountersRequest {
+impl GetOnlineCounters {
     pub fn new() -> Self {
-        OnlineCountersRequest {
+        Self {
             from: None,
             mac: None,
         }
@@ -24,8 +24,10 @@ impl OnlineCountersRequest {
         self.mac = Some(mac);
         self
     }
+}
 
-    pub fn request(&self) -> request::Request {
+impl ApiRequest for GetOnlineCounters {
+    fn request(&self) -> request::Request {
         request::Request::get("api/online/counters".into())
             .query_opt("mac", self.mac.clone())
             .query_opt(
@@ -35,7 +37,7 @@ impl OnlineCountersRequest {
     }
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
 pub struct OnlineCounter {
     #[serde(with = "chrono::serde::ts_seconds")]
     pub start: DateTime<Utc>,

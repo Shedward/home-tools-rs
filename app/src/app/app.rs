@@ -55,7 +55,7 @@ impl eframe::App for App {
         egui::CentralPanel::default().show(ctx, |ui| {
             if let Some(tool_cell) = &self.open_tool.as_mut() {
                 let mut tool = tool_cell.borrow_mut();
-                ui.heading(format!("Home - {}", tool.title()));
+                ui.heading(format!("Home :: {}", tool.title()));
                 ui.add_space(Space(2).into());
                 tool.ui(ui);
             }

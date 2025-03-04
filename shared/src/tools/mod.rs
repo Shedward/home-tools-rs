@@ -1,3 +1,5 @@
+pub mod display_name;
 pub mod loading;
 
-pub use loading::Loading;
+pub use display_name::*;
+pub use loading::*;

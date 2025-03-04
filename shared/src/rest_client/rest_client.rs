@@ -1,6 +1,7 @@
 use super::request;
 use super::response;
 use super::response::Response;
+use super::ApiRequest;
 use crate::tools::Loading;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -17,7 +18,12 @@ pub type LoadingResponse = Arc<Mutex<Loading<Response, Error>>>;
 pub type LoadingValue<T> = Arc<Mutex<Loading<T, Error>>>;
 
 pub trait RestClient: Send + Sync {
-    fn request(&self, request: request::Request, on_done: ResponseHandler);
+    fn fetch(&self, request: request::Request, on_done: ResponseHandler);
+
+    #[inline]
+    fn api_request(&self, request: &dyn ApiRequest, on_done: ResponseHandler) {
+        self.fetch(request.request(), on_done);
+    }
 }
 
 #[cfg(feature = "ehttp")]
@@ -30,7 +36,7 @@ pub mod ehttp_client {
     }
 
     impl RestClient for Client {
-        fn request(&self, request: request::Request, on_done: ResponseHandler) {
+        fn fetch(&self, request: request::Request, on_done: ResponseHandler) {
             let r = request.into_request(&self.endpoint);
             ehttp::fetch(r, move |result| {
                 on_done(
