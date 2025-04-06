@@ -71,15 +71,19 @@ impl Tool for OnlineCountersTool {
                     Loading::Loaded(devices) => {
                         for device in devices {
                             let display_name = device.display_name();
-                            let device = device.clone();
-                            ui.selectable_value(
-                                &mut self.selected_device,
-                                Some(device.clone()),
-                                display_name,
-                            );
+                            let selection = Some(device.clone());
+                            if ui
+                                .selectable_label(selection == self.selected_device, display_name)
+                                .clicked()
+                            {
+                                self.selected_device = selection;
+                                self.fetch_online_data();
+                            }
                         }
                     }
-                    _ => {}
+                    _ => {
+                        ui.label("Loading...");
+                    }
                 }
             });
 
