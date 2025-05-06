@@ -2,6 +2,7 @@ use crate::rest_client::*;
 use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::Deserialize;
 
+#[derive(Debug)]
 pub struct GetOnlineCounters {
     pub from: Option<NaiveDateTime>,
     pub mac: Option<String>,
@@ -20,8 +21,8 @@ impl GetOnlineCounters {
         self
     }
 
-    pub fn mac(mut self, mac: String) -> Self {
-        self.mac = Some(mac);
+    pub fn mac(mut self, mac: Option<String>) -> Self {
+        self.mac = mac;
         self
     }
 }

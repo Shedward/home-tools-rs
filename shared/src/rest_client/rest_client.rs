@@ -3,6 +3,7 @@ use super::response;
 use super::response::Response;
 use super::ApiRequest;
 use crate::tools::Loading;
+use std::fmt;
 use std::sync::Arc;
 use std::sync::Mutex;
 
@@ -11,6 +12,16 @@ pub enum Error {
     NetworkFailed(String),
     WrongResponse(String),
     SerializationFailed(String),
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Error::NetworkFailed(msg) => write!(f, "Network Failed: {}", msg),
+            Error::WrongResponse(msg) => write!(f, "Wrong Response: {}", msg),
+            Error::SerializationFailed(msg) => write!(f, "Serialization Failed: {}", msg),
+        }
+    }
 }
 
 pub type ResponseHandler = Box<dyn 'static + Send + FnOnce(Result<response::Response, Error>)>;

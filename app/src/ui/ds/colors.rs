@@ -48,6 +48,12 @@ impl Colors {
         self.tertiary
     }
 
+    pub fn shimmer(&self, ui: &Ui) -> Color32 {
+        let t = ui.input(|i| i.time);
+        let pulse = (t * 2.0).sin() * 0.3 + 1.0;
+        self.accessory().gamma_multiply(pulse as f32)
+    }
+
     pub fn plot(self, value: f32) -> Color32 {
         self.positive.lerp_to_gamma(self.accessory(), 1.0 - value)
     }
